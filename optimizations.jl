@@ -17,74 +17,6 @@ module Optimizations
         return alpha
     end
 
-    function zoom(phi, phi_g, alpha_low, alpha_high, c1, c2, interp=0.5, max_iter=100)
-        """zoom function for wolfe line search"""
-        phi_zero = phi(0)
-        phi_gzero = phi_g(0)
-
-        for i in 1:max_iter
-            alpha = interp * (alpha_low + alpha_high)
-            y = phi(alpha)
-
-            if (y > phi_zero + c1 * alpha * phi_gzero) || y >= phi(alpha_low)
-                alpha_high = alpha
-            else
-                dy = phi_g(alpha)
-
-                if abs(dy) <= -c2 * phi_gzero
-                    return alpha
-                end
-                if dy * (alpha_high - alpha_low) >= 0
-                    alpha_high = alpha_low
-                end
-                alpha_low = alpha
-            end
-        end
-
-        return (alpha_high + alpha_low) / 2
-    end
-
-    function wolfe_line_search(phi, phi_g, alpha_zero, alpha_max, c1=1e-4, c2=0.9, interp=0.5)
-        """
-        linear line search for getting the optimal step size imposing the wolfe conditions
-
-        phi(alpha) = f(xk + alpha * pk)
-        """
-
-        alpha_last = alpha_zero
-        alpha = interp * (0. + alpha_max)
-        
-        phi_zero = phi(0.)
-        phi_gzero = phi_g(0.)
-        y = phi(alpha)
-        y_last = phi(alpha_last)        
-
-        i = 1
-        while true
-            y = phi(alpha)
-            if y > phi_zero + c1 * alpha * phi_gzero || (i > 1 && y >= phi(alpha_last))
-                return zoom(phi, phi_g, alpha_last, alpha, c1, c2)
-            end
-
-            dy = phi_g(alpha)
-
-            if abs(dy) <= -c2 * phi_gzero
-                return alpha
-            end
-
-            if dy >= 0
-                return zoom(phi, phi_g, alpha, alpha_max, c1, c2)
-            end
-
-            # prepare next loop
-            alpha_last = alpha
-            alpha = interp * (alpha + alpha_max)
-            y_last = y
-            y = phi(alpha)
-            i += 1
-        end
-    end
-
     function gradient_descent(f, g, x0, max_iter=100000, tol=1e-4)
         """performs gradient descent with backtracking line search"""
         xk = x0
@@ -209,10 +141,10 @@ module Optimizations
         return xks
     end
 
-    function sr1(f, g, x0, max_iter=1000, tol=1e-4, r=1e-8)
+    function sr1(f, g, x0, beta=0.5, max_iter=1000, tol=1e-4, r=1e-8)
         """sr1 with backtracking line search"""
         xk = x0
-        H = I
+        H = beta * I
         f_gxk = g(xk)
 
         xks = Vector{Vector{Float32}}(); push!(xks, xk)
@@ -226,6 +158,7 @@ module Optimizations
 
             alpha = backtracking_line_search(f, f_gxk, xk, pk, 1, 0.9)
             xnext = xk + alpha * pk
+						
             f_gnext = g(xnext)
 
             s = xnext - xk

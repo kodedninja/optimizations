@@ -9,7 +9,7 @@ function solve(f, g, h, s)
     min_gd = Optimizations.gradient_descent(f, g, s)
     min_newton = Optimizations.newton(f, g, h, s)
     min_cg = Optimizations.conjugate_gradient(f, g, s)
-    min_quasi_newton = Optimizations.bfgs(f, g, s)
+    min_quasi_newton = Optimizations.sr1(f, g, s)
 
     return min_gd, min_newton, min_cg, min_quasi_newton
 end
