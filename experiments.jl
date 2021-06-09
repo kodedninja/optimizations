@@ -40,17 +40,21 @@ function generate_multivariate(n)
     println(min_qn[end])
 end
 
-# f, g, h = Functions.problem_from_multivariate_pair(Functions.A4, Functions.r4)
-# s = Functions.s4
+f, g, h = Functions.problem_from_multivariate_pair(Functions.A4, Functions.r4)
+s = Functions.s4
 
-# min_gd, min_newton, min_cg, min_qn = solve(Functions.poly1, Functions.poly1_g, Functions.poly1_h, Functions.poly1_s)
-# println(min_gd)
-# println(min_newton)
-# println(min_cg)
+min_gd, min_newton, min_cg, min_qn = solve(f, g, h, s)
 
-stupid(x) = x[1]^2 + x[2]^2
-stupid_g(x) = [2x[1], 2x[2]]
-stupid_h(x) = [2 0; 0 2]
-
-min_qn = Optimizations.sr1(stupid, stupid_g, [1., 1.])
-println(min_qn)
+println("Problem:")
+println("GD")
+println(length(min_gd), " steps")
+println(min_gd[end])
+println("Newton")
+println(length(min_newton), " steps")
+println(min_newton[end])
+println("CG")
+println(length(min_cg), " steps")
+println(min_cg[end])
+println("Quasi-Newton")
+println(length(min_qn), " steps")
+println(min_qn[end])

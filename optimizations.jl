@@ -170,16 +170,17 @@ module Optimizations
         return xks
     end
 
-    function bfgs(f, g, x0, beta=0.01, max_iter=10000, tol=1e-4)
+    function bfgs(f, g, x0, max_iter=10000, tol=1e-4)
         """bfgs with backtracking line search"""
         xk = x0
-        H = beta * I
-
+        H = I
+        xks = Vector{Vector{Float32}}(); push!(xks, xk)       
+        
         f_gxk = g(xk)
 
         for i in 1:max_iter
             if norm(f_gxk) <= tol
-                return xk
+                return xks
             end
 
             pk = -H * f_gxk
@@ -200,31 +201,30 @@ module Optimizations
             end
 
             xk = xnext
-            f_gnext = f_gxk
+            push!(xks, xk)
+            f_gxk = f_gnext
         end
         
         println("BFGS did not converge")
-        return xk
+        return xks
     end
 
-    function sr1(f, g, x0, max_iter=20, tol=1e-2, r=1e-8)
+    function sr1(f, g, x0, max_iter=1000, tol=1e-4, r=1e-8)
         """sr1 with backtracking line search"""
         xk = x0
         H = I
-
         f_gxk = g(xk)
+
+        xks = Vector{Vector{Float32}}(); push!(xks, xk)
 
         for i in 1:max_iter
             if norm(f_gxk) <= tol
-                return xk
+                return xks
             end
 
             pk = -H * f_gxk
-            
-            phi(alpha) = f(xk + alpha * pk)
-            phi_g(alpha) = g(xk + alpha * pk)' * pk
 
-            alpha = wolfe_line_search(phi, phi_g, 1., 20.)
+            alpha = backtracking_line_search(f, f_gxk, xk, pk, 1, 0.9)
             xnext = xk + alpha * pk
             f_gnext = g(xnext)
 
@@ -237,10 +237,11 @@ module Optimizations
             end
 
             xk = xnext
-            f_gnext = f_gxk
+            push!(xks, xk)
+            f_gxk = f_gnext
         end
         
         println("SR1 did not converge")
-        return xk
+        return xks
     end
 end
