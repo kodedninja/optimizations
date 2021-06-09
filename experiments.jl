@@ -40,21 +40,15 @@ function generate_multivariate(n)
     println(min_qn[end])
 end
 
-f, g, h = Functions.problem_from_multivariate_pair(Functions.A4, Functions.r4)
-s = Functions.s4
+for i in 1:length(Functions.problems)
+    f, g, h, s = Functions.problems[i]
 
-min_gd, min_newton, min_cg, min_qn = solve(f, g, h, s)
+    println("Problem $i\nStarting point: $s\n")
+    min_gd, min_newton, min_cg, min_qn = solve(f, g, h, s)
+    steps_gd, steps_newton, steps_cg, steps_qn = length(min_gd), length(min_newton), length(min_cg), length(min_qn)
+    min_gd, min_newton, min_cg, min_qn = min_gd[end], min_newton[end], min_cg[end], min_qn[end]
+    println("Steps:\n Steepest descent: $steps_gd \n Newton: $steps_newton \n Conjugate gradient: $steps_cg \n Quasi-Newton: $steps_qn\n")
+    println("Solutions:\n SD: $min_gd\n Newton: $min_newton\n CG: $min_cg\n QN: $min_qn")
 
-println("Problem:")
-println("GD")
-println(length(min_gd), " steps")
-println(min_gd[end])
-println("Newton")
-println(length(min_newton), " steps")
-println(min_newton[end])
-println("CG")
-println(length(min_cg), " steps")
-println(min_cg[end])
-println("Quasi-Newton")
-println(length(min_qn), " steps")
-println(min_qn[end])
+    println()
+end

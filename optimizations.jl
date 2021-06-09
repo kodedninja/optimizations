@@ -1,12 +1,18 @@
 """
 implementations of optimization methods
+
+all functions stop when the norm of the gradient at point xk is closer to 0 than the tolerance parameter (1e-4).
 """
 
 module Optimizations
     using LinearAlgebra
   
-    function backtracking_line_search(f, f_gxk, xk, pk, alpha_init, rho, c=1e-4)
-        """Armijo backtracking"""
+    function backtracking_line_search(f, f_gxk, xk, pk, alpha_init, rho; c=1e-4)
+        """
+        Armijo backtracking
+
+        walks back from an initial step length alpha_init until the sufficient decrease condition is fulfilled
+        """
         alpha = alpha_init
         fxk = f(xk)
 
@@ -17,8 +23,15 @@ module Optimizations
         return alpha
     end
 
-    function gradient_descent(f, g, x0, max_iter=100000, tol=1e-4)
-        """performs gradient descent with backtracking line search"""
+    function gradient_descent(f, g, x0; max_iter=100000, tol=1e-4)
+        """
+        performs gradient (steepest) descent
+        
+        the step direction is always the steepest direction, after that the step length is chosen using backtracking
+        so that the sufficient decrease condition is fulfilled.
+
+        results in a very slow, but guaranteed convergence.
+        """
         xk = x0
         xks = Vector{Vector{Float32}}(); push!(xks, xk)
         f_gxk = g(x0)
@@ -36,12 +49,19 @@ module Optimizations
             f_gxk = g(xk)
         end
         
-        println("gradient descent did not converge")
+        println("Gradient descent did not converge")
         return xks
     end
 
-    function newton(f, g, h, x0, max_iter=50, tol=1e-4)
-        """performs newton's method with backtracking line search"""
+    function newton(f, g, h, x0; max_iter=50, tol=1e-4)
+        """
+        performs newton's method
+
+        next to the gradient, the inverse hessian is also used to define the step direction.
+        the step length is again chosen by backtracking, starting from 1.
+
+        because of the second-order information of the hessian, convergence is blazing fast close to the solution.
+        """
         multivariate = length(x0) > 1
 
         xk = x0
@@ -65,12 +85,12 @@ module Optimizations
             f_gxk = g(xk)
         end
         
-        println("newton's method did not converge")
+        println("Newton's method did not converge")
         return xks
     end
 
-    function conjugate_gradient(f, g, x0, max_iter=1000, tol=1e-4)
-        """conjugate gradient by the dai-yuan method using backtracking line search"""
+    function conjugate_gradient(f, g, x0; max_iter=1000, tol=1e-4)
+        """conjugate gradient by the dai-yuan"""
         multivariate = length(x0) > 1
 
         xk = x0
@@ -102,8 +122,16 @@ module Optimizations
         return xks
     end
 
-    function bfgs(f, g, x0, max_iter=10000, tol=1e-4)
-        """bfgs with backtracking line search"""
+    function bfgs(f, g, x0; max_iter=1000, tol=1e-4)
+        """
+        bfgs
+
+        bfgs is a quasti-newton method. it tries to calculate and maintain an approximation of the true hessian (or inverse hessian)
+        without knowing this.
+
+        in this implementation, the initial inverse hessian approximation is calculated according to the first step,
+        and the updates are skipped if the curvature condition is not fulfilled.
+        """
         xk = x0
         H = I
         xks = Vector{Vector{Float32}}(); push!(xks, xk)       
@@ -141,8 +169,14 @@ module Optimizations
         return xks
     end
 
-    function sr1(f, g, x0, beta=0.5, max_iter=1000, tol=1e-4, r=1e-8)
-        """sr1 with backtracking line search"""
+    function sr1(f, g, x0; beta=0.5, max_iter=1000, tol=1e-4, r=1e-8)
+        """
+        sr1
+        
+        sr1 is also a quasi-newton method (as bfgs), but with a different update formula for the inverse hessian.
+
+        the initial approximation is chosen as beta * I and some updates are skipped, which prevents the method from breaking down.
+        """
         xk = x0
         H = beta * I
         f_gxk = g(xk)
