@@ -4,8 +4,11 @@ implementations of optimization methods
 all functions stop when the norm of the gradient at point xk is closer to 0 than the tolerance parameter (1e-4).
 """
 
+
 module Optimizations
     using LinearAlgebra
+
+    import ..Functions
   
     function backtracking_line_search(f, f_gxk, xk, pk, alpha_init, rho; c=1e-4)
         """
@@ -34,7 +37,8 @@ module Optimizations
         """
         xk = x0
         xks = Vector{Vector{Float32}}(); push!(xks, xk)
-        f_gxk = g(x0)
+
+        f_gxk = g != nothing ? g(x0) : Functions.approx_gradient(f, x0)
 
         for i in 1:max_iter
             if norm(f_gxk) <= tol
@@ -46,7 +50,8 @@ module Optimizations
             
             xk = xk + alpha * pk
             push!(xks, xk)
-            f_gxk = g(xk)
+
+            f_gxk = g != nothing ? g(xk) : Functions.approx_gradient(f, xk)
         end
         
         println("Gradient descent did not converge")

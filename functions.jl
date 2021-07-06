@@ -3,6 +3,8 @@ problems and helpers to generate problems
 """
 
 module Functions
+    const roundoff_e = (1.1 * 1e-16)^(1/3)
+
     function random_positive_definite_matrix(n)
         A = rand(n, n)
         A = A'*A
@@ -29,6 +31,36 @@ module Functions
         A, r = random_multivariate_pair(n)
         f, g, h = problem_from_multivariate_pair(A, r)
         return f, g, h, r
+    end
+
+    function approx_gradient(f, x; e=roundoff_e)
+        n = length(x)
+        g = zeros(n)
+        e_i = zeros(n)
+        for i in 1:n
+            e_i[i] = 1.
+            g[i] = (f(x + e_i * e) - f(x - e_i * e))/2e
+            e_i[i] = 0.
+        end
+        return g
+    end
+
+    function approx_hessian(f, x; e=roundoff_e)
+        n = length(x)
+        h = zeros(n, n)
+        e_i = zeros(n)
+        e_j = zeros(n)
+
+        for i in 1:n
+            e_i[i] = 1.
+            for j in 1:n
+                e_j[j] = 1.
+                h[i, j] = (f(x + e * e_i + e * e_j) - f(x + e * e_i) - f(x + e * e_j) + f(x))/e^2
+                e_j[j] = 0.
+            end
+            e_i[i] = 0.
+        end
+        return h
     end
 
     f(x) = x[1]^2 * x[2]^4 + (x[2]-1)^2 + 2

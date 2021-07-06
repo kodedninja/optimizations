@@ -40,6 +40,14 @@ function generate_multivariate(n)
     println(min_qn[end])
 end
 
+
+f, g, h, s = Functions.problems[9]
+min_gd = Optimizations.gradient_descent(f, g, s)
+println(length(min_gd))
+min_gd = Optimizations.gradient_descent(f, nothing, s)
+println(length(min_gd))
+exit()
+
 for i in 1:length(Functions.problems)
     f, g, h, s = Functions.problems[i]
 
