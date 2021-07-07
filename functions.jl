@@ -3,7 +3,7 @@ problems and helpers to generate problems
 """
 
 module Functions
-    const roundoff_e = (1.1 * 1e-16)^(1/3)
+    const roundoff_e = eps()^(1/4)
 
     function random_positive_definite_matrix(n)
         A = rand(n, n)
@@ -60,6 +60,12 @@ module Functions
             end
             e_i[i] = 0.
         end
+				
+        # fix when function is not multivariate
+        if n == 1
+            h = [h[1][1]]
+        end
+
         return h
     end
 

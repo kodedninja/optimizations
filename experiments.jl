@@ -6,10 +6,10 @@ import .Optimizations
 
 function solve(f, g, h, s)
     """solves problem f with all methods from starting point s"""
-    min_gd = Optimizations.gradient_descent(f, g, s)
-    min_newton = Optimizations.newton(f, g, h, s)
-    min_cg = Optimizations.conjugate_gradient(f, g, s)
-    min_quasi_newton = Optimizations.sr1(f, g, s)
+    min_gd = Optimizations.gradient_descent(f, s; g=g)
+    min_newton = Optimizations.newton(f, s; g=g, h=h)
+    min_cg = Optimizations.conjugate_gradient(f, s; g=g)
+    min_quasi_newton = Optimizations.sr1(f, s; g=g)
 
     return min_gd, min_newton, min_cg, min_quasi_newton
 end
@@ -41,10 +41,12 @@ function generate_multivariate(n)
 end
 
 
-f, g, h, s = Functions.problems[9]
-min_gd = Optimizations.gradient_descent(f, g, s)
+f, g, h, s = Functions.problems[2]
+min_gd = Optimizations.gradient_descent(f, s; g=g)
+println(min_gd[end])
 println(length(min_gd))
-min_gd = Optimizations.gradient_descent(f, nothing, s)
+min_gd = Optimizations.gradient_descent(f, s)
+println(min_gd[end])
 println(length(min_gd))
 exit()
 
