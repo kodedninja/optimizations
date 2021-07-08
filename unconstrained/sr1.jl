@@ -1,5 +1,5 @@
-include("functions.jl")
-include("utils.jl")
+include("utils/functions.jl")
+include("utils/utils.jl")
 
 using LinearAlgebra
 

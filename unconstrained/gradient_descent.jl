@@ -1,5 +1,5 @@
-include("functions.jl")
-include("utils.jl")
+include("utils/functions.jl")
+include("utils/utils.jl")
 
 using LinearAlgebra
 
@@ -44,7 +44,7 @@ for i in 1:length(Functions.problems)
     println("Problem $i\nStarting point: $s\n")
     xk = gradient_descent(f, s; tol=1e-4)
     steps = length(xk)
-    solutions = xk[end]
+    solution = xk[end]
     println("Steps: $steps\n")
     println("Solution:\n $solution\n")
 end
