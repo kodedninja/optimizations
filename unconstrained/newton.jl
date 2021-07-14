@@ -10,7 +10,7 @@ function newton(f, x0; g=nothing, h=nothing, max_iter=50, tol=1e-4)
     """
     performs newton's method
 
-    next to the gradient, the inverse hessian is also used to define the step direction.
+    next to the gradient, the inverse hessian (through LU factorization) is also used to define the step direction.
     the step length is again chosen by backtracking, starting from 1.
 
     because of the second-order information of the hessian, convergence is blazing fast close to the solution.
@@ -22,6 +22,7 @@ function newton(f, x0; g=nothing, h=nothing, max_iter=50, tol=1e-4)
     f_gxk = g != nothing ? g(xk) : Utils.approx_gradient(f, x0)
 
     for i in 1:max_iter
+        # stopping criteria
         if norm(f_gxk) <= tol
             return xks
         end
@@ -29,7 +30,7 @@ function newton(f, x0; g=nothing, h=nothing, max_iter=50, tol=1e-4)
         f_hxk = h != nothing ? h(xk) : Utils.approx_hessian(f, xk)
         
         if multivariate
-            pk = -inv(f_hxk) * f_gxk
+            pk = -(lu(f_hxk) \ f_gxk)
         else
             pk = [-1/f_hxk * f_gxk]
         end

@@ -21,6 +21,7 @@ function sr1(f, x0; g=nothing, beta=0.5, max_iter=1000, tol=1e-4, r=1e-8)
     xks = Vector{Vector{Float32}}(); push!(xks, xk)
 
     for i in 1:max_iter
+        # stopping criteria
         if norm(f_gxk) <= tol
             return xks
         end

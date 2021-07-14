@@ -21,6 +21,7 @@ function gradient_descent(f, x0; g=nothing, max_iter=100000, tol=1e-4)
     f_gxk = g != nothing ? g(x0) : Utils.approx_gradient(f, x0)
 
     for i in 1:max_iter
+        # stopping criteria
         if norm(f_gxk) <= tol
             return xks
         end

@@ -23,6 +23,7 @@ function bfgs(f, x0; g=nothing, max_iter=1000, tol=1e-4)
     f_gxk = g != nothing ? g(xk) : Utils.approx_gradient(f, xk)
 
     for i in 1:max_iter
+        # stopping criteria
         if norm(f_gxk) <= tol
             return xks
         end
