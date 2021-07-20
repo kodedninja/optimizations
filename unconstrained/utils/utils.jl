@@ -18,6 +18,11 @@ module Utils
     end
 
      function approx_gradient(f, x; e=roundoff_e)
+		"""
+		approx_gradient
+		
+		approximates the gradient of objective function f
+		"""
         n = length(x)
         g = zeros(n)
         e_i = zeros(n)
@@ -30,6 +35,11 @@ module Utils
     end
 
     function approx_hessian(f, x; e=roundoff_e)
+		"""
+		approx_hessian
+		
+		approximates the hessian of objective function f
+		"""
         n = length(x)
         h = zeros(n, n)
         e_i = zeros(n)

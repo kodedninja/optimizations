@@ -3,6 +3,7 @@ include("utils/utils.jl")
 
 using LinearAlgebra
 
+#import problems and helper functions
 import .Functions
 import .Utils
 
@@ -14,10 +15,26 @@ function gradient_descent(f, x0; g=nothing, max_iter=100000, tol=1e-4)
     so that the sufficient decrease condition is fulfilled.
 
     results in a very slow, but guaranteed convergence.
-    """
+    
+	f:
+	Objective function
+	
+	x0:
+	Starting point
+	
+	g:
+	Gradient of f, can either be given as an argument when calling the function or
+	estimated via Utils.approx_gradient() if g=nothing
+
+	max_iteration:
+	Maximum number of iteration the algortihm is allowed to perform
+
+	tol:
+	Tolerance for the stopping criteria
+	"""
     xk = x0
     xks = Vector{Vector{Float32}}(); push!(xks, xk)
-
+	# As asked, the gradient gets approximated and is not given as an argument
     f_gxk = g != nothing ? g(x0) : Utils.approx_gradient(f, x0)
 
     for i in 1:max_iter
@@ -27,6 +44,7 @@ function gradient_descent(f, x0; g=nothing, max_iter=100000, tol=1e-4)
         end
 
         pk = -f_gxk
+		# line search
         alpha = Utils.backtracking_line_search(f, f_gxk, xk, pk, 3, 0.9)
 
         xk = xk + alpha * pk
@@ -35,13 +53,17 @@ function gradient_descent(f, x0; g=nothing, max_iter=100000, tol=1e-4)
         f_gxk = g != nothing ? g(xk) : Utils.approx_gradient(f, xk)
     end
 
+	# if max_iteration is exceeded and the stopping criteria was never met, method did not converge
     println("Gradient descent did not converge")
     return xks
 end
 
+# Go over each problem defined in Functions.problems(functions.jil)
 for i in 1:length(Functions.problems)
+	# Get obj function, gradient, hessian and starting point
     f, g, h, s = Functions.problems[i]
 
+	# call method with obj function and starting point (without gradient or hessian, approximated later on)
     println("Problem $i\nStarting point: $s\n")
     xk = gradient_descent(f, s; tol=1e-4)
     steps = length(xk)
