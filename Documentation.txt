@@ -1,0 +1,44 @@
+We went with Julia as programming language for this project.
+
+Julia Installation Guide Linux:
+https://ferrolho.github.io/blog/2019-01-26/how-to-install-julia-on-ubuntu
+
+Julia Installation Guide Windows:
+https://www.softcover.io/read/7b8eb7d0/juliabook/introduction
+1.3.2 Installing Julia on Windows Step 1-5
+
+After installing Julia one should be able to run the console command:" Julia ",  to get the interpreter running. To run one of the programs, one has to head to the desired direcotry (with the console) of the file and run: julia filename.ji
+
+
+The "unconstrained" directory contains the unconstrained minimization methods gradient descent, Newton's method, conjugate gradient and the quasi-Newton method BFGS. Each file contains the algorithm implementation and some code to run it on some problems. The directory "unconstrained/utils" contains functions.jl, a set of problems and helpers to generate these, and utils.jl, utilities shared across the methods: backtracking line search, gradient & Hessian approximation.
+
+So to run each of the unconstrained minimization methods on the problems of functions.jil one has to run following commands:
+(Make sure you are in the directory root/unconstrained/)
+
+Gradient descent:
+julia gradient_descent.jl
+
+Newton's method:
+julia newton.jl
+
+Conjugate gradient: 
+julia conjugate_gradient.jl
+
+The quasi-Newton method BFGS:
+bfgs.jl
+
+
+The output of each method will look like this schema:
+
+Problem 1
+Starting point: [0.3, 1.2]
+
+Steps: 77
+
+Solution:
+ Float32[1.0084117f-7, 1.0000467]
+
+Check the files to see further documenation on the programs. 
+
+
+
