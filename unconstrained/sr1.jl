@@ -13,25 +13,25 @@ function sr1(f, x0; g=nothing, beta=0.5, max_iter=1000, tol=1e-4, r=1e-8)
 
     the initial approximation is chosen as beta * I and some updates are skipped, which prevents the method from breaking down.
 
-	f:
-	Objective function
-	
-	x0:
-	Starting point
-	
-	g:
-	Gradient of f, can either be given as an argument when calling the function or
-	estimated via Utils.approx_gradient() if g=nothing
+    f:
+    Objective function
 
-	max_iteration:
-	Maximum number of iteration the algortihm is allowed to perform
+    x0:
+    Starting point
 
-	tol:
-	Tolerance for the stopping criteria
+    g:
+    Gradient of f, can either be given as an argument when calling the function or
+    estimated via Utils.approx_gradient() if g=nothing
+
+    max_iteration:
+    Maximum number of iteration the algortihm is allowed to perform
+
+    tol:
+    Tolerance for the stopping criteria
     """
     xk = x0
     H = beta * I
-	# As asked, the gradient gets approximated and is not given as an argument
+    # As asked, the gradient gets approximated and is not given as an argument
     f_gxk = g != nothing ? g(xk) : Utils.approx_gradient(f, xk)
     
     xks = Vector{Vector{Float32}}(); push!(xks, xk)
@@ -64,13 +64,13 @@ function sr1(f, x0; g=nothing, beta=0.5, max_iter=1000, tol=1e-4, r=1e-8)
     return xks
 end
 
-# Go over each problem defined in Functions.problems(functions.jil)
+# Go over each problem defined in Functions.problems (utils/functions.jl)
 for i in 1:length(Functions.problems)
 	# Get obj function, gradient, hessian and starting point
     f, g, h, s = Functions.problems[i]
 
     println("Problem $i\nStarting point: $s\n")
-	# call method with obj function and starting point (without gradient or hessian, approximated later on)
+	# call method with obj function and starting point (without gradient or hessian, approximated later)
     xk = sr1(f, s; beta=0.3)
     steps = length(xk)
     solution = xk[end]

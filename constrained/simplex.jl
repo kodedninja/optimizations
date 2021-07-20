@@ -3,22 +3,22 @@ using LinearAlgebra
 function simplex_step!(A, b, c, x, basic, nonbasic)
     B = A[:, basic]
     N = A[:, nonbasic]
-    B_inv = inv(B)
 
     c_b = c[basic]
     c_n = c[nonbasic]
 
-    lambda = B_inv' * c_b
+    lambda = inv(B') * c_b
     s_n = c_n - N' * lambda
-
-    println("s_n ", s_n)
 
     if all(s_n .>= 0)
         return true
     end
 
-    q = argmin(N' * lambda) # entering index
-    d = B_inv * A[:, q]
+    q = argmin(s_n) # entering index
+    d = inv(B) * A[:, q]
+
+    println("q=", q)
+    println("d=", d)
 
     if all(d .<= 0)
         error("simplex: unbounded problem")
@@ -54,7 +54,7 @@ function simplex(A, b, c; max_steps=100)
     x[nonbasic] .= 0
 
     solution = false
-    
+   
     for i in 1:max_steps
         if simplex_step!(A, b, c, x, basic, nonbasic)
             println("value ", c' * x)
@@ -62,6 +62,7 @@ function simplex(A, b, c; max_steps=100)
         end
         println(x, basic)
         println("value ", c'*x)
+        exit()
 
         nonbasic = collect(setdiff(BitSet(1:n), BitSet(basic)))
     end

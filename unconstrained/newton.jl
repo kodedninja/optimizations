@@ -3,7 +3,6 @@ include("utils/utils.jl")
 
 using LinearAlgebra
 
-#import problems and helper functions
 import .Functions
 import .Utils
 
@@ -16,27 +15,27 @@ function newton(f, x0; g=nothing, h=nothing, max_iter=50, tol=1e-4)
 
     because of the second-order information of the hessian, convergence is blazing fast close to the solution.
 
-	f:
-	Objective function
-	
-	x0:
-	Starting point
-	
-	g:
-	Gradient of f, can either be given as an argument when calling the function or
-	estimated via Utils.approx_gradient() if g=nothing
+    f:
+    Objective function
 
-	max_iteration:
-	Maximum number of iteration the algortihm is allowed to perform
+    x0:
+    Starting point
 
-	tol:
-	Tolerance for the stopping criteria
+    g:
+    Gradient of f, can either be given as an argument when calling the function or
+    estimated via Utils.approx_gradient() if g=nothing
+
+    max_iteration:
+    Maximum number of iteration the algortihm is allowed to perform
+
+    tol:
+    Tolerance for the stopping criteria
     """
     multivariate = length(x0) > 1
 
     xk = x0
     xks = Vector{Vector{Float32}}(); push!(xks, xk)
-	# As asked, the gradient gets approximated and is not given as an argument
+    # As asked, the gradient gets approximated and is not given as an argument
     f_gxk = g != nothing ? g(xk) : Utils.approx_gradient(f, x0)
 
     for i in 1:max_iter
@@ -44,7 +43,7 @@ function newton(f, x0; g=nothing, h=nothing, max_iter=50, tol=1e-4)
         if norm(f_gxk) <= tol
             return xks
         end
-		# As asked, the hessian gets approximated and is not given as an argument
+        # As asked, the hessian gets approximated and is not given as an argument
         f_hxk = h != nothing ? h(xk) : Utils.approx_hessian(f, xk)
         
         if multivariate
@@ -66,13 +65,13 @@ function newton(f, x0; g=nothing, h=nothing, max_iter=50, tol=1e-4)
     return xks
 end
 
-# Go over each problem defined in Functions.problems(functions.jil)
+# Go over each problem defined in Functions.problems (utils/functions.l)
 for i in 1:length(Functions.problems)
 	# Get obj function, gradient, hessian and starting point
     f, g, h, s = Functions.problems[i]
 
     println("Problem $i\nStarting point: $s\n")
-	# call method with obj function and starting point (without gradient or hessian, approximated later on)
+	# call method with obj function and starting point (without gradient or hessian, approximated later)
     xk = newton(f, s)
     steps = length(xk)
     solution = xk[end]

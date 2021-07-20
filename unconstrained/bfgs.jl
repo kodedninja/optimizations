@@ -3,7 +3,6 @@ include("utils/utils.jl")
 
 using LinearAlgebra
 
-#import problems and helper functions
 import .Functions
 import .Utils
 
@@ -15,21 +14,21 @@ function bfgs(f, x0; g=nothing, max_iter=1000, tol=1e-4)
     in this implementation, the initial inverse hessian approximation is calculated according to the first step,
     and the updates are skipped if the curvature condition is not fulfilled.
 
-	f:
-	Objective function
-	
-	x0:
-	Starting point
-	
-	g:
-	Gradient of f, can either be given as an argument when calling the function or
-	estimated via Utils.approx_gradient() if g=nothing
+    f:
+    Objective function
 
-	max_iteration:
-	Maximum number of iteration the algortihm is allowed to perform
+    x0:
+    Starting point
 
-	tol:
-	Tolerance for the stopping criteria
+    g:
+    Gradient of f, can either be given as an argument when calling the function or
+    estimated via Utils.approx_gradient() if g=nothing
+
+    max_iteration:
+    Maximum number of iteration the algortihm is allowed to perform
+
+    tol:
+    Tolerance for the stopping criteria
     """
     xk = x0
     H = I
@@ -68,18 +67,18 @@ function bfgs(f, x0; g=nothing, max_iter=1000, tol=1e-4)
         f_gxk = f_gnext
     end
     
-	# if max_iteration is exceeded and the stopping criteria was never met, method did not converge
+	# if max_iteration is exceeded and the stopping criteria was never met, the method did not converge
     println("BFGS did not converge")
     return xks
 end
 
-# Go over each problem defined in Functions.problems(functions.jil)
+# Go over each problem defined in Functions.problems (utils/functions.jl)
 for i in 1:length(Functions.problems)
 	# Get obj function, gradient, hessian and starting point
     f, g, h, s = Functions.problems[i]
 
     println("Problem $i\nStarting point: $s\n")
-	# call method with obj function and starting point (without gradient or hessian, approximated later on)
+	# call method with obj function and starting point (without gradient or hessian, approximated later)
     xk = bfgs(f, s)
     steps = length(xk)
     solution = xk[end]

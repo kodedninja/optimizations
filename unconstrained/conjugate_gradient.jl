@@ -3,29 +3,28 @@ include("utils/utils.jl")
 
 using LinearAlgebra
 
-#import problems and helper functions
 import .Functions
 import .Utils
 
 function conjugate_gradient(f, x0; g=nothing, max_iter=1000, tol=1e-4)
     """conjugate gradient by the dai-yuan
 
-	f:
-	Objective function
-	
-	x0:
-	Starting point
-	
-	g:
-	Gradient of f, can either be given as an argument when calling the function or
-	estimated via Utils.approx_gradient() if g=nothing
+    f:
+    Objective function
 
-	max_iteration:
-	Maximum number of iteration the algortihm is allowed to perform
+    x0:
+    Starting point
 
-	tol:
-	Tolerance for the stopping criteria
-	"""
+    g:
+    Gradient of f, can either be given as an argument when calling the function or
+    estimated via Utils.approx_gradient() if g=nothing
+
+    max_iteration:
+    Maximum number of iteration the algortihm is allowed to perform
+
+    tol:
+    Tolerance for the stopping criteria
+    """
     multivariate = length(x0) > 1
 
     xk = x0
@@ -59,13 +58,13 @@ function conjugate_gradient(f, x0; g=nothing, max_iter=1000, tol=1e-4)
     return xks
 end
 
-# Go over each problem defined in Functions.problems(functions.jil)
+# Go over each problem defined in Functions.problems (utils/functions.jl)
 for i in 1:length(Functions.problems)
 	# Get obj function, gradient, hessian and starting point
     f, g, h, s = Functions.problems[i]
 
     println("Problem $i\nStarting point: $s\n")
-	# call method with obj function and starting point (without gradient or hessian, approximated later on)
+	# call method with obj function and starting point (without gradient or hessian, approximated later)
     xk = conjugate_gradient(f, s)
     steps = length(xk)
     solution = xk[end]
